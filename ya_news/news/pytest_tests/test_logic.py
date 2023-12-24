@@ -73,7 +73,7 @@ def test_author_can_delete_comment(
         comment,
         news_delete_url,
         news_comment_redirect
-        ):
+):
     """Авторизованный пользователь может удалять свои комментарии."""
     author_client.post(news_delete_url)
     assert not Comment.objects.filter(pk=comment.pk).exists()
@@ -99,7 +99,7 @@ def test_author_cant_delete_comment_of_another_user(
         admin_client,
         comment,
         news_delete_url
-        ):
+):
     """Проверка удаления собственных комментариев пользователя."""
     count_comments_initial = Comment.objects.count()
     comment_text_initial = comment.text

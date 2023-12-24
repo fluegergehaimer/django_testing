@@ -15,91 +15,93 @@ AUTHOR_CLIENT = lazy_fixture('author_client')
 
 
 @pytest.mark.parametrize(
-    'url, user, status', ((lazy_fixture('users_signup_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_login_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_logout_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_home_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_detail_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_edit_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.NOT_FOUND),
-
-                          (lazy_fixture('news_delete_url'),
-                           ADMIN_CLIENT,
-                           HTTPStatus.NOT_FOUND),
-
-                          (lazy_fixture('users_signup_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_login_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_logout_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_home_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_detail_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_edit_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_delete_url'),
-                           AUTHOR_CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_signup_url'),
-                           CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_login_url'),
-                           CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('users_logout_url'),
-                           CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_home_url'),
-                           CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_detail_url'),
-                           CLIENT,
-                           HTTPStatus.OK),
-
-                          (lazy_fixture('news_edit_url'),
-                           CLIENT,
-                           HTTPStatus.FOUND),
-
-                          (lazy_fixture('news_delete_url'),
-                           CLIENT,
-                           HTTPStatus.FOUND),
-                          )
-                        )
+    'url, user, status', (
+        (
+            lazy_fixture('users_signup_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_login_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_logout_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_home_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_detail_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_edit_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.NOT_FOUND),
+        (
+            lazy_fixture('news_delete_url'),
+            ADMIN_CLIENT,
+            HTTPStatus.NOT_FOUND),
+        (
+            lazy_fixture('users_signup_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_login_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_logout_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_home_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_detail_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_edit_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_delete_url'),
+            AUTHOR_CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_signup_url'),
+            CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_login_url'),
+            CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('users_logout_url'),
+            CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_home_url'),
+            CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_detail_url'),
+            CLIENT,
+            HTTPStatus.OK),
+        (
+            lazy_fixture('news_edit_url'),
+            CLIENT,
+            HTTPStatus.FOUND),
+        (
+            lazy_fixture('news_delete_url'),
+            CLIENT,
+            HTTPStatus.FOUND),
+    )
+)
 def test_overall_availability(
         url, user, status
 ):
