@@ -1,12 +1,11 @@
 """Модуль с фикстурами для тестов."""
 import pytest
-
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.utils import timezone
+from django.test import Client
 from django.urls import reverse
-
+from django.utils import timezone
 
 from news.models import Comment, News
 
@@ -21,8 +20,9 @@ def author(django_user_model):
 
 
 @pytest.fixture
-def author_client(author, client):
-    """Клиент савторизованным пользователем."""
+def author_client(author):
+    """Клиент с авторизованным пользователем."""
+    client = Client()
     client.force_login(author)
     return client
 
@@ -30,40 +30,26 @@ def author_client(author, client):
 @pytest.fixture
 def news():
     """Создание объекта новости."""
-    news = News.objects.create(
+    return News.objects.create(
         title='Заголовок',
         text='Текст',
     )
-    return news
-
-
-@pytest.fixture
-def news_id(news):
-    """Возврат идентификатора новости."""
-    return news.id
 
 
 @pytest.fixture
 def comment(author, news):
     """Создание объекта комментария."""
-    comment = Comment.objects.create(
+    return Comment.objects.create(
         news=news,
         author=author,
         text='Текст комментария'
     )
-    return comment
-
-
-@pytest.fixture
-def form_data():
-    """Возврат формы комментария."""
-    return {'text': 'Текст комментария'}
 
 
 @pytest.fixture
 def news_list():
     """Создание списка новостей."""
-    news_list = News.objects.bulk_create(
+    News.objects.bulk_create(
         News(
             title=f'Заголовок {i}',
             text=f'Текст {i}',
@@ -71,7 +57,6 @@ def news_list():
         )
         for i in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     )
-    return news_list
 
 
 @pytest.fixture
@@ -85,7 +70,6 @@ def comment_list(news, author):
         )
         comment.created = timezone.now() + timedelta(days=i)
         comment.save()
-    return comment_list
 
 
 @pytest.fixture
@@ -131,10 +115,9 @@ def news_delete_url(comment):
 
 
 @pytest.fixture
-def news_detail_redirect_url(users_login_url, comment):
+def news_detail_redirect_url(users_login_url, news_detail_url):
     """Возврат редиректа для логина и перехода к 'news:detail'."""
-    next_url = reverse('news:detail', args=(comment.pk,))
-    return f"{users_login_url}?next={next_url}"
+    return f"{users_login_url}?next={news_detail_url}"
 
 
 @pytest.fixture
@@ -153,3 +136,11 @@ def edit_redirect_url(users_login_url, news_edit_url):
 def delete_redirect_url(users_login_url, news_delete_url):
     """Возврат редиректа для логина и перехода к ссылке удаления."""
     return f'{users_login_url}?next={news_delete_url}'
+
+
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(
+    db,  # noqa
+):
+    """Автоматический доступ к базе данных."""
+    pass
