@@ -59,7 +59,7 @@ class TestLogic(Creation):
         self.form_data.pop('slug')
         response = self.author_client.post(NOTES_ADD_URL, data=self.form_data)
         self.assertRedirects(response, NOTE_SUCCESS)
-        self.assertEqual(note_list.count(),  1)
+        self.assertEqual(note_list.count(), 1)
         new_note = Note.objects.get()
         slugify_slug = slugify(self.form_data['title'])
         self.assertEqual(new_note.slug, slugify_slug)
