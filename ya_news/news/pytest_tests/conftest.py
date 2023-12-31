@@ -143,4 +143,3 @@ def enable_db_access_for_all_tests(
     db,  # noqa
 ):
     """Автоматический доступ к базе данных."""
-    pass

@@ -20,6 +20,11 @@ NOTE_LIST_URL = reverse('notes:list')
 NOTES_ADD_URL = reverse('notes:add')
 NOTE_SUCCESS = reverse('notes:success')
 ADD_REDIRECT_URL = f'{LOGIN_URL}?next={NOTES_ADD_URL}'
+SUCCESS_REDIRECT_URL = f'{LOGIN_URL}?next={NOTE_SUCCESS}'
+LIST_REDIRECT_URL = f'{LOGIN_URL}?next={NOTE_LIST_URL}'
+DETAIL_REDIRECT_URL = f'{LOGIN_URL}?next={NOTES_DETAIL_URL}'
+EDIT_REDIRECT_URL = f'{LOGIN_URL}?next={NOTES_EDIT_URL}'
+DELETE_REDIRECT_URL = f'{LOGIN_URL}?next={NOTES_DELETE_URL}'
 
 
 class Creation(TestCase):
@@ -38,7 +43,6 @@ class Creation(TestCase):
             'title': 'Заголовок',
             'text': 'Текст',
             'slug': SLUG,
-            'author': cls.author
         }
         if note_creation:
             cls.note = Note.objects.create(

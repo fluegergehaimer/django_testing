@@ -2,13 +2,14 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 
 from .core import (
     Creation, NOTE_LIST_URL, NOTES_DELETE_URL,
     NOTES_DETAIL_URL, HOMEPAGE_URL, LOGIN_URL,
     LOGOUT_URL, SIGNUP_URL, NOTES_ADD_URL, NOTE_SUCCESS,
-    NOTES_EDIT_URL
+    NOTES_EDIT_URL, ADD_REDIRECT_URL, SUCCESS_REDIRECT_URL,
+    LIST_REDIRECT_URL, DETAIL_REDIRECT_URL,
+    EDIT_REDIRECT_URL, DELETE_REDIRECT_URL
 )
 
 User = get_user_model()
@@ -24,40 +25,36 @@ class TestRoutes(Creation):
 
     def test_pages_availability(self):
         """Страницы доступные всем пользователям."""
-        test_list = [
-            (
-                self.client,
-                (HOMEPAGE_URL, LOGIN_URL, LOGOUT_URL, SIGNUP_URL)
-            ),
-            (
-                self.reader_client,
-                (NOTE_LIST_URL, NOTES_ADD_URL, NOTE_SUCCESS)
-            ),
-            (
-                self.author_client,
-                (NOTES_DETAIL_URL, NOTES_EDIT_URL, NOTES_DELETE_URL)
-            ),
+        cases = [
+            (self.client, HOMEPAGE_URL, HTTPStatus.OK),
+            (self.client, LOGIN_URL, HTTPStatus.OK),
+            (self.client, LOGOUT_URL, HTTPStatus.OK),
+            (self.client, SIGNUP_URL, HTTPStatus.OK),
+            (self.reader_client, NOTE_LIST_URL, HTTPStatus.OK),
+            (self.reader_client, NOTES_ADD_URL, HTTPStatus.OK),
+            (self.reader_client, NOTE_SUCCESS, HTTPStatus.OK),
+            (self.reader_client, NOTES_DETAIL_URL, HTTPStatus.NOT_FOUND),
+            (self.reader_client, NOTES_EDIT_URL, HTTPStatus.NOT_FOUND),
+            (self.reader_client, NOTES_DELETE_URL, HTTPStatus.NOT_FOUND),
+            (self.author_client, NOTES_DETAIL_URL, HTTPStatus.OK),
+            (self.author_client, NOTES_EDIT_URL, HTTPStatus.OK),
+            (self.author_client, NOTES_DELETE_URL, HTTPStatus.OK),
         ]
-        for client, urls in test_list:
-            for url in urls:
-                with self.subTest(url=url):
-                    self.assertEqual(
-                        client.get(url).status_code,
-                        HTTPStatus.OK
-                    )
+        for client, url, status in cases:
+            with self.subTest(url=url, client=client, status=status):
+                response = client.get(url)
+                self.assertEqual(response.status_code, status)
 
     def test_redirect_for_anonymous_client(self):
         """Проверка редиректа не авторизованного пользователя."""
         adress = (
-            ('notes:edit', (self.note.slug,)),
-            ('notes:delete', (self.note.slug,)),
-            ('notes:detail', (self.note.slug,)),
-            ('notes:list', None),
-            ('notes:add', None),
-            ('notes:success', None),
+            (NOTES_ADD_URL, ADD_REDIRECT_URL),
+            (NOTE_SUCCESS, SUCCESS_REDIRECT_URL),
+            (NOTE_LIST_URL, LIST_REDIRECT_URL),
+            (NOTES_DETAIL_URL, DETAIL_REDIRECT_URL),
+            (NOTES_DELETE_URL, DELETE_REDIRECT_URL),
+            (NOTES_EDIT_URL, EDIT_REDIRECT_URL),
         )
-        for key, value in adress:
-            with self.subTest(key=key):
-                url = reverse(key, args=value)
-                redirect_url = f'{LOGIN_URL}?next={url}'
-                self.assertRedirects(self.client.get(url), redirect_url)
+        for url, redirect in adress:
+            with self.subTest(url=url, redirect=redirect):
+                self.assertRedirects(self.client.get(url), redirect)

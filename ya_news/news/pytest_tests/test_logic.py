@@ -1,17 +1,19 @@
 """Модуль с тестами проверки логики приложения."""
 from http import HTTPStatus
+from random import choice
 
 import pytest
-from pytest_django.asserts import assertFormError
+from pytest_django.asserts import assertFormError, assertQuerysetEqual
 
 from news.models import Comment
 from news.forms import BAD_WORDS, WARNING
 
 
 FORM_DATA = {'text': 'Текст комментария'}
+DATA = {'text': f'Какой-то текст, {choice(BAD_WORDS)}, еще текст.'}
 
 
-def test_user_cant_create_comment(
+def test_anonymous_client_cant_create_comment(
         client,
         news_detail_url,
         news_detail_redirect_url
@@ -21,7 +23,7 @@ def test_user_cant_create_comment(
     assert Comment.objects.count() == 0
 
 
-def test_user_can_create_comment(
+def test_authorised_client_can_create_comment(
         author_client,
         news,
         author,
@@ -42,7 +44,7 @@ def test_user_cant_use_bad_words(author_client, news_detail_url, bad_word):
     """Проверка запрещенных слов."""
     response = author_client.post(
         news_detail_url,
-        data={'text': f'Какой-то текст, {bad_word}, еще текст.'}
+        data=DATA
     )
     assertFormError(response, form='form', field='text', errors=WARNING)
     assert Comment.objects.count() == 0
@@ -56,8 +58,6 @@ def test_author_can_edit_comment(
     """Проверка редактирования комментария авторизованым пользователем."""
     author_client.post(news_detail_url, data=FORM_DATA)
     updated_comment = Comment.objects.get(id=comment.id)
-    comment.refresh_from_db()
-    assert comment == updated_comment
     assert comment.text == updated_comment.text
     assert comment.news == updated_comment.news
     assert comment.author == updated_comment.author
@@ -70,8 +70,10 @@ def test_author_can_delete_comment(
         news_comment_redirect
 ):
     """Авторизованный пользователь может удалять свои комментарии."""
+    assert Comment.objects.count() != 0
     author_client.post(news_delete_url)
     assert not Comment.objects.filter(pk=comment.pk).exists()
+    assert Comment.objects.count() == 0
 
 
 def test_user_cant_edit_comment_of_another_user(
@@ -85,7 +87,6 @@ def test_user_cant_edit_comment_of_another_user(
     updated_comment = Comment.objects.get(id=comment.id)
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert comment_count_initial == Comment.objects.count()
-    assert comment == updated_comment
     assert comment.text == updated_comment.text
     assert comment.news == updated_comment.news
     assert comment.author == updated_comment.author
@@ -96,10 +97,9 @@ def test_author_cant_delete_comment_of_another_user(
         comment,
         news_delete_url
 ):
-    """Проверка удаления собственных комментариев пользователя."""
-    count_comments_initial = Comment.objects.count()
+    """Проверка удаления чужих комментариев пользователя."""
+    comments_initial = Comment.objects.all()
     response = admin_client.post(news_delete_url)
-    count_comments_last = Comment.objects.count()
-    comment.refresh_from_db()
+    count_comments_last = Comment.objects.all()
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert count_comments_initial == count_comments_last
+    assertQuerysetEqual(comments_initial, count_comments_last)

@@ -22,90 +22,27 @@ DELETE_REDIRECT_URL = lazy_fixture('delete_redirect_url')
 
 @pytest.mark.parametrize(
     'url, clients, status', (
-        (
-            SIGN_UP_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.OK),
-        (
-            LOGIN_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.OK),
-        (
-            LOGOUT_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.OK),
-        (
-            HOME_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.OK),
-        (
-            DETAIL_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.OK),
-        (
-            EDIT_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.NOT_FOUND),
-        (
-            DELETE_URL,
-            ADMIN_CLIENT,
-            HTTPStatus.NOT_FOUND),
-        (
-            SIGN_UP_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            LOGIN_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            LOGOUT_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            HOME_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            DETAIL_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            EDIT_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            DELETE_URL,
-            AUTHOR_CLIENT,
-            HTTPStatus.OK),
-        (
-            SIGN_UP_URL,
-            CLIENT,
-            HTTPStatus.OK),
-        (
-            LOGIN_URL,
-            CLIENT,
-            HTTPStatus.OK),
-        (
-            LOGOUT_URL,
-            CLIENT,
-            HTTPStatus.OK),
-        (
-            HOME_URL,
-            CLIENT,
-            HTTPStatus.OK),
-        (
-            DETAIL_URL,
-            CLIENT,
-            HTTPStatus.OK),
-        (
-            EDIT_URL,
-            CLIENT,
-            HTTPStatus.FOUND),
-        (
-            DELETE_URL,
-            CLIENT,
-            HTTPStatus.FOUND),
+        (SIGN_UP_URL, ADMIN_CLIENT, HTTPStatus.OK),
+        (LOGIN_URL, ADMIN_CLIENT, HTTPStatus.OK),
+        (LOGOUT_URL, ADMIN_CLIENT, HTTPStatus.OK),
+        (HOME_URL, ADMIN_CLIENT, HTTPStatus.OK),
+        (DETAIL_URL, ADMIN_CLIENT, HTTPStatus.OK),
+        (EDIT_URL, ADMIN_CLIENT, HTTPStatus.NOT_FOUND),
+        (DELETE_URL, ADMIN_CLIENT, HTTPStatus.NOT_FOUND),
+        (SIGN_UP_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (LOGIN_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (LOGOUT_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (HOME_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (DETAIL_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (EDIT_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (DELETE_URL, AUTHOR_CLIENT, HTTPStatus.OK),
+        (SIGN_UP_URL, CLIENT, HTTPStatus.OK),
+        (LOGIN_URL, CLIENT, HTTPStatus.OK),
+        (LOGOUT_URL, CLIENT, HTTPStatus.OK),
+        (HOME_URL, CLIENT, HTTPStatus.OK),
+        (DETAIL_URL, CLIENT, HTTPStatus.OK),
+        (EDIT_URL, CLIENT, HTTPStatus.FOUND),
+        (DELETE_URL, CLIENT, HTTPStatus.FOUND),
     )
 )
 def test_overall_availability(
