@@ -3,17 +3,17 @@ from http import HTTPStatus
 from random import choice
 
 import pytest
-from pytest_django.asserts import assertFormError, assertQuerysetEqual
+from pytest_django.asserts import assertFormError
 
 from news.models import Comment
 from news.forms import BAD_WORDS, WARNING
 
 
 FORM_DATA = {'text': 'Текст комментария'}
-DATA = {'text': f'Какой-то текст, {choice(BAD_WORDS)}, еще текст.'}
+BAD_WORDS_DATA = {'text': f'Какой-то текст, {choice(BAD_WORDS)}, еще текст.'}
 
 
-def test_anonymous_client_cant_create_comment(
+def test_anonym_client_cant_create_comment(
         client,
         news_detail_url,
         news_detail_redirect_url
@@ -44,7 +44,7 @@ def test_user_cant_use_bad_words(author_client, news_detail_url, bad_word):
     """Проверка запрещенных слов."""
     response = author_client.post(
         news_detail_url,
-        data=DATA
+        data=BAD_WORDS_DATA
     )
     assertFormError(response, form='form', field='text', errors=WARNING)
     assert Comment.objects.count() == 0
@@ -98,8 +98,7 @@ def test_author_cant_delete_comment_of_another_user(
         news_delete_url
 ):
     """Проверка удаления чужих комментариев пользователя."""
-    comments_initial = Comment.objects.all()
+    comments_initial = set(Comment.objects.all())
     response = admin_client.post(news_delete_url)
-    count_comments_last = Comment.objects.all()
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assertQuerysetEqual(comments_initial, count_comments_last)
+    assert comments_initial == set(Comment.objects.all())

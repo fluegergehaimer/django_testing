@@ -4,7 +4,7 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 
 from .core import (
-    Creation, NOTE_LIST_URL, NOTES_DELETE_URL,
+    ClientNoteCreation, NOTE_LIST_URL, NOTES_DELETE_URL,
     NOTES_DETAIL_URL, HOMEPAGE_URL, LOGIN_URL,
     LOGOUT_URL, SIGNUP_URL, NOTES_ADD_URL, NOTE_SUCCESS,
     NOTES_EDIT_URL, ADD_REDIRECT_URL, SUCCESS_REDIRECT_URL,
@@ -15,7 +15,7 @@ from .core import (
 User = get_user_model()
 
 
-class TestRoutes(Creation):
+class TestRoutes(ClientNoteCreation):
     """Проверка маршрутов приложения."""
 
     @classmethod
@@ -42,8 +42,7 @@ class TestRoutes(Creation):
         ]
         for client, url, status in cases:
             with self.subTest(url=url, client=client, status=status):
-                response = client.get(url)
-                self.assertEqual(response.status_code, status)
+                self.assertEqual(client.get(url).status_code, status)
 
     def test_redirect_for_anonymous_client(self):
         """Проверка редиректа не авторизованного пользователя."""

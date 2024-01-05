@@ -3,10 +3,13 @@ from http import HTTPStatus
 
 from notes.models import Note
 from notes.forms import NoteForm
-from .core import Creation, NOTES_ADD_URL, NOTES_EDIT_URL, NOTE_LIST_URL
+from .core import (
+    ClientNoteCreation, NOTES_ADD_URL,
+    NOTES_EDIT_URL, NOTE_LIST_URL
+)
 
 
-class SingleNoteTests(Creation):
+class SingleNoteTests(ClientNoteCreation):
     """Проверки отображения."""
 
     @classmethod
@@ -14,19 +17,17 @@ class SingleNoteTests(Creation):
         """Переопределение данных класса."""
         super().setUpTestData(note_creation=True)
 
-    def test_user_cant_see_others_notes(self):
+    def test_client_cant_see_others_notes(self):
         """Неавторизованный пользователь не может видеть заметки."""
         response = self.reader_client.get(NOTE_LIST_URL)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(self.note in response.context['object_list'], False)
+        self.assertNotIn(self.note, response.context['object_list'])
 
     def test_author_client_note_list_display(self):
         """Авторизованый пользователь может видеть заметки."""
         response = self.author_client.get(NOTE_LIST_URL)
-        object_list = response.context['object_list']
-        note = object_list.get(pk=self.note.pk)
-        self.assertEqual(object_list.count(), Note.objects.count())
-        self.assertIn(self.note, object_list)
+        note = response.context['object_list'].get(pk=self.note.pk)
+        self.assertIn(note, Note.objects.all())
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(self.note.text, note.text)
         self.assertEqual(self.note.title, note.title)

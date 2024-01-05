@@ -27,7 +27,7 @@ EDIT_REDIRECT_URL = f'{LOGIN_URL}?next={NOTES_EDIT_URL}'
 DELETE_REDIRECT_URL = f'{LOGIN_URL}?next={NOTES_DELETE_URL}'
 
 
-class Creation(TestCase):
+class ClientNoteCreation(TestCase):
     """Базовый класс для тестов."""
 
     @classmethod
@@ -40,9 +40,9 @@ class Creation(TestCase):
         cls.author_client.force_login(cls.author)
         cls.reader_client.force_login(cls.reader)
         cls.form_data = {
-            'title': 'Заголовок',
-            'text': 'Текст',
-            'slug': SLUG,
+            'title': 'Новый заголовок',
+            'text': 'Новый текст',
+            'slug': 'slug',
         }
         if note_creation:
             cls.note = Note.objects.create(
