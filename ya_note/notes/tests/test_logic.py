@@ -39,7 +39,7 @@ class TestNoteCreation(ClientNoteCreation):
         """Пользователь может создавать заметки со слагом и без."""
         cases = [
             ('', slugify(self.form_data['title'])),
-            ('slg', self.form_data['slug'])
+            ('slug', self.form_data['slug'])
         ]
         for slug, expected_slug in cases:
             self.form_data['slug'] = slug
