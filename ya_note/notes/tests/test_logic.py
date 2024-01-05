@@ -36,10 +36,10 @@ class TestNoteCreation(ClientNoteCreation):
         self.assertEqual(set(Note.objects.all()), notes)
 
     def test_user_can_create_note_with_and_without_slug(self):
-        """Пользователь может создавать заметкисо слагом и без."""
+        """Пользователь может создавать заметки со слагом и без."""
         cases = [
             ('', slugify(self.form_data['title'])),
-            ('slug', self.form_data['slug'])
+            ('slg', self.form_data['slug'])
         ]
         for slug, expected_slug in cases:
             self.form_data['slug'] = slug
