@@ -8,7 +8,7 @@ from notes.models import Note
 from .core import (
     ClientNoteCreation, NOTES_ADD_URL, NOTE_SUCCESS,
     NOTES_EDIT_URL, ADD_REDIRECT_URL, NOTES_DELETE_URL
-    )
+)
 
 
 class TestNoteCreation(ClientNoteCreation):
