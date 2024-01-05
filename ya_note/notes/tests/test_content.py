@@ -1,7 +1,6 @@
 """Модуль проверки контента приложения."""
 from http import HTTPStatus
 
-from notes.models import Note
 from notes.forms import NoteForm
 from .core import (
     ClientNoteCreation, NOTES_ADD_URL,
@@ -24,10 +23,9 @@ class SingleNoteTests(ClientNoteCreation):
         self.assertNotIn(self.note, response.context['object_list'])
 
     def test_author_client_note_list_display(self):
-        """Авторизованый пользователь может видеть заметки."""
+        """Авторизованый пользователь может видеть свои  заметки."""
         response = self.author_client.get(NOTE_LIST_URL)
         note = response.context['object_list'].get(pk=self.note.pk)
-        self.assertIn(note, Note.objects.all())
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(self.note.text, note.text)
         self.assertEqual(self.note.title, note.title)

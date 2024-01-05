@@ -13,7 +13,7 @@ FORM_DATA = {'text': 'Текст комментария'}
 BAD_WORDS_DATA = {'text': f'Какой-то текст, {choice(BAD_WORDS)}, еще текст.'}
 
 
-def test_anonym_client_cant_create_comment(
+def test_anonym_cant_create_comment(
         client,
         news_detail_url,
         news_detail_redirect_url
@@ -40,7 +40,7 @@ def test_authorised_client_can_create_comment(
 
 
 @pytest.mark.parametrize('bad_word', BAD_WORDS)
-def test_user_cant_use_bad_words(author_client, news_detail_url, bad_word):
+def test_client_cant_use_bad_words(author_client, news_detail_url, bad_word):
     """Проверка запрещенных слов."""
     response = author_client.post(
         news_detail_url,
@@ -82,11 +82,11 @@ def test_user_cant_edit_comment_of_another_user(
         news_edit_url
 ):
     """Проверка доступа только к своим коментариям."""
-    comment_count_initial = Comment.objects.count()
+    comment_count = Comment.objects.count()
     response = admin_client.post(news_edit_url, data=FORM_DATA)
     updated_comment = Comment.objects.get(id=comment.id)
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert comment_count_initial == Comment.objects.count()
+    assert comment_count == Comment.objects.count()
     assert comment.text == updated_comment.text
     assert comment.news == updated_comment.news
     assert comment.author == updated_comment.author
@@ -98,7 +98,7 @@ def test_author_cant_delete_comment_of_another_user(
         news_delete_url
 ):
     """Проверка удаления чужих комментариев пользователя."""
-    comments_initial = set(Comment.objects.all())
+    comments = set(Comment.objects.all())
     response = admin_client.post(news_delete_url)
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert comments_initial == set(Comment.objects.all())
+    assert comments == set(Comment.objects.all())
