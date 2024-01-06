@@ -35,16 +35,28 @@ class TestNoteCreation(ClientNoteCreation):
                              field='slug', errors=self.note.slug + WARNING)
         self.assertEqual(set(Note.objects.all()), notes)
 
+    def note_creation(self, form, expected_slug):
+        """Базовый метод создания заметок."""
+        Note.objects.all().delete()
+        response = self.author_client.post(NOTES_ADD_URL, form)
+        self.assertRedirects(response, NOTE_SUCCESS)
+        self.assertEqual(Note.objects.count(), 1)
+        note = Note.objects.get()
+        self.assertEqual(note.title, self.form_data['title'])
+        self.assertEqual(note.text, self.form_data['text'])
+        self.assertEqual(note.author, self.author)
+        self.assertEqual(note.slug, expected_slug)
+
     def test_user_can_create_note(self):
         """Пользователь может создавать заметки."""
-        super().note_creation(
+        self.note_creation(
             form=self.form_data,
             expected_slug=self.form_data['slug']
         )
 
     def test_user_can_create_note_without_slug(self):
         """Пользователь может создавать заметки без слага."""
-        super().note_creation(
+        self.note_creation(
             form={
                 'title': 'Новый заголовок',
                 'text': 'Новый текст',
